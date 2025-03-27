@@ -31,6 +31,45 @@ class _CadastroScreenState extends State<CadastroScreen> {
       final nome = _nomeController.text;
       final idade = int.tryParse(_idadeController.text) ?? 0;
 
+      if (nome.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Erro: O campo nome não pode estar vazio.',
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      if (_idadeController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Erro: O campo idade não pode estar vazio.',
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      if (idade <= 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Erro: O campo idade deve ser maior que zero.',
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
       final novoCadastro = Cadastro(
         id: widget.cadastro?.id,
         nome: nome,

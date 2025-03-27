@@ -28,12 +28,6 @@ class CadastroForm extends StatelessWidget {
               labelText: 'Nome',
               border: OutlineInputBorder(),
             ),
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return 'Nome é obrigatório';
-              }
-              return null;
-            },
           ),
           SizedBox(height: 16),
           TextFormField(
@@ -44,16 +38,6 @@ class CadastroForm extends StatelessWidget {
               labelText: 'Idade',
               border: OutlineInputBorder(),
             ),
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return 'Idade é obrigatória';
-              }
-              final idade = int.tryParse(value);
-              if (idade == null || idade <= 0) {
-                return 'A idade deve ser maior que zero';
-              }
-              return null;
-            },
           ),
           SizedBox(height: 20),
           Center(
