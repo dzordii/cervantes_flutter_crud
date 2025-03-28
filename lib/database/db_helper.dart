@@ -2,6 +2,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart';
 import 'dart:io';
+import 'package:intl/intl.dart';
 
 import '../models/cadastro.dart';
 
@@ -54,13 +55,16 @@ class DBHelper {
               )
             ''');
 
-            // Trigger para INSERT
+            final String currentDateTime = DateFormat(
+              'yyyy-MM-dd HH:mm:ss',
+            ).format(DateTime.now());
+
             await db.execute('''
               CREATE TRIGGER IF NOT EXISTS after_insert_cadastro
               AFTER INSERT ON cadastro
               BEGIN
                 INSERT INTO log (dataHora, operacao)
-                VALUES (datetime('now'), 'Insert');
+                VALUES ('$currentDateTime', 'Insert');
               END;
             ''');
 
@@ -70,7 +74,7 @@ class DBHelper {
               AFTER UPDATE ON cadastro
               BEGIN
                 INSERT INTO log (dataHora, operacao)
-                VALUES (datetime('now'), 'Update');
+                VALUES ('$currentDateTime', 'Update');
               END;
             ''');
 
@@ -80,7 +84,7 @@ class DBHelper {
               AFTER DELETE ON cadastro
               BEGIN
                 INSERT INTO log (dataHora, operacao)
-                VALUES (datetime('now'), 'Delete');
+                VALUES ('$currentDateTime', 'Delete');
               END;
             ''');
           },
