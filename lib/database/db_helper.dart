@@ -53,6 +53,36 @@ class DBHelper {
                 operacao TEXT NOT NULL
               )
             ''');
+
+            // Trigger para INSERT
+            await db.execute('''
+              CREATE TRIGGER IF NOT EXISTS after_insert_cadastro
+              AFTER INSERT ON cadastro
+              BEGIN
+                INSERT INTO log (dataHora, operacao)
+                VALUES (datetime('now'), 'Insert');
+              END;
+            ''');
+
+            // Trigger para UPDATE
+            await db.execute('''
+              CREATE TRIGGER IF NOT EXISTS after_update_cadastro
+              AFTER UPDATE ON cadastro
+              BEGIN
+                INSERT INTO log (dataHora, operacao)
+                VALUES (datetime('now'), 'Update');
+              END;
+            ''');
+
+            // Trigger para DELETE
+            await db.execute('''
+              CREATE TRIGGER IF NOT EXISTS after_delete_cadastro
+              AFTER DELETE ON cadastro
+              BEGIN
+                INSERT INTO log (dataHora, operacao)
+                VALUES (datetime('now'), 'Delete');
+              END;
+            ''');
           },
           onOpen: (db) async {
             print("Banco de dados aberto.");
@@ -68,10 +98,6 @@ class DBHelper {
     final db = await database;
     try {
       int id = await db.insert('cadastro', cadastro.toMap());
-      await db.insert('log', {
-        'dataHora': DateTime.now().toIso8601String(),
-        'operacao': 'Insert',
-      });
       print("Cadastro inserido: ${cadastro.toMap()}");
       return id;
     } catch (e) {
@@ -100,13 +126,6 @@ class DBHelper {
         whereArgs: [cadastro.id],
       );
 
-      if (resultado > 0) {
-        await db.insert('log', {
-          'dataHora': DateTime.now().toIso8601String(),
-          'operacao': 'Update',
-        });
-      }
-
       print("Cadastro atualizado: ${cadastro.toMap()}");
       return resultado;
     } catch (e) {
@@ -122,13 +141,6 @@ class DBHelper {
         where: 'id = ?',
         whereArgs: [id],
       );
-
-      if (resultado > 0) {
-        await db.insert('log', {
-          'dataHora': DateTime.now().toIso8601String(),
-          'operacao': 'Delete',
-        });
-      }
 
       print("Cadastro deletado: ID $id");
       return resultado;
