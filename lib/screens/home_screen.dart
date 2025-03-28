@@ -27,7 +27,6 @@ class _HomeScreenState extends State<HomeScreen> {
         isLoading = false; // Finaliza o carregamento
       });
     } catch (e) {
-      print("Erro ao carregar cadastros: $e");
       setState(() {
         isLoading = false; // Finaliza o carregamento mesmo em caso de erro
       });

@@ -8,10 +8,9 @@ import '../models/cadastro.dart';
 
 class DBHelper {
   static DatabaseFactory _getDatabaseFactory() {
-    // Apenas para Desktop
     if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
       if (databaseFactory != databaseFactoryFfi) {
-        sqfliteFfiInit(); // Inicializa corretamente
+        sqfliteFfiInit();
         databaseFactory = databaseFactoryFfi;
       }
       return databaseFactoryFfi;
@@ -38,7 +37,6 @@ class DBHelper {
         options: OpenDatabaseOptions(
           version: 1,
           onCreate: (db, version) async {
-            print("Criando tabelas...");
             await db.execute('''
               CREATE TABLE IF NOT EXISTS cadastro (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,41 +53,32 @@ class DBHelper {
               )
             ''');
 
-            final String currentDateTime = DateFormat(
-              'yyyy-MM-dd HH:mm:ss',
-            ).format(DateTime.now());
-
             await db.execute('''
               CREATE TRIGGER IF NOT EXISTS after_insert_cadastro
               AFTER INSERT ON cadastro
               BEGIN
                 INSERT INTO log (dataHora, operacao)
-                VALUES ('$currentDateTime', 'Insert');
+                VALUES (datetime('now', 'localtime'), 'Insert');
               END;
             ''');
 
-            // Trigger para UPDATE
             await db.execute('''
               CREATE TRIGGER IF NOT EXISTS after_update_cadastro
               AFTER UPDATE ON cadastro
               BEGIN
                 INSERT INTO log (dataHora, operacao)
-                VALUES ('$currentDateTime', 'Update');
+                VALUES (datetime('now', 'localtime'), 'Update');
               END;
             ''');
 
-            // Trigger para DELETE
             await db.execute('''
               CREATE TRIGGER IF NOT EXISTS after_delete_cadastro
               AFTER DELETE ON cadastro
               BEGIN
                 INSERT INTO log (dataHora, operacao)
-                VALUES ('$currentDateTime', 'Delete');
+                VALUES (datetime('now', 'localtime'), 'Delete');
               END;
             ''');
-          },
-          onOpen: (db) async {
-            print("Banco de dados aberto.");
           },
         ),
       );
@@ -102,7 +91,6 @@ class DBHelper {
     final db = await database;
     try {
       int id = await db.insert('cadastro', cadastro.toMap());
-      print("Cadastro inserido: ${cadastro.toMap()}");
       return id;
     } catch (e) {
       throw Exception("Erro ao inserir cadastro: $e");
@@ -113,7 +101,6 @@ class DBHelper {
     final db = await database;
     try {
       final List<Map<String, dynamic>> maps = await db.query('cadastro');
-      print("Registros encontrados: $maps");
       return List.generate(maps.length, (i) => Cadastro.fromMap(maps[i]));
     } catch (e) {
       throw Exception("Erro ao buscar cadastros: $e");
@@ -130,7 +117,6 @@ class DBHelper {
         whereArgs: [cadastro.id],
       );
 
-      print("Cadastro atualizado: ${cadastro.toMap()}");
       return resultado;
     } catch (e) {
       throw Exception("Erro ao atualizar cadastro: $e");
@@ -146,7 +132,6 @@ class DBHelper {
         whereArgs: [id],
       );
 
-      print("Cadastro deletado: ID $id");
       return resultado;
     } catch (e) {
       throw Exception("Erro ao deletar cadastro: $e");

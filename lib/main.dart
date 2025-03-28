@@ -9,14 +9,9 @@ void main() {
       "Esta aplicação é suportada apenas em plataformas desktop.",
     );
   }
-
-  print("Inicializando o Flutter...");
-  WidgetsFlutterBinding.ensureInitialized(); 
-  print("Flutter inicializado.");
+  WidgetsFlutterBinding.ensureInitialized();
   sqfliteFfiInit();
   databaseFactory = databaseFactoryFfi;
-  print("Banco de dados inicializado.");
-
   runApp(const MyApp());
 }
 

@@ -85,7 +85,6 @@ class _CadastroScreenState extends State<CadastroScreen> {
         Navigator.pop(context, true);
       } catch (e) {
         if (e.toString().contains("UNIQUE constraint failed: cadastro.idade")) {
-          // Exibe uma mensagem amigável para o erro de unicidade
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
